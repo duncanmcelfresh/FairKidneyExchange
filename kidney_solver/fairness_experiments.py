@@ -99,7 +99,7 @@ def start():
         print_header(output_file)
         kpd_dirs = glob.glob(input_dir+os.sep+'*/')
 
-        for dir in kpd_dirs[:2]:
+        for dir in kpd_dirs:
 
             dirname = dir.split('/')[-2] # os.path.basename(dir)
 
@@ -130,7 +130,7 @@ def start():
         print_header(output_file)
 
         maxcard_files = glob.glob(input_dir+os.sep+'*maxcard.input')
-        for maxcard_filename in maxcard_files[:2]: # ['/Users/duncan/Google Drive/research/graphs/graphs_from_john/graphs_64/unos_bimodal_apd_v64_i3_maxcard.input']
+        for maxcard_filename in maxcard_files: # ['/Users/duncan/Google Drive/research/graphs/graphs_from_john/graphs_64/unos_bimodal_apd_v64_i3_maxcard.input']
 
             file_base = '_'.join(maxcard_filename.split('_')[:-1])
             dirname = maxcard_filename.split('/')[-1]

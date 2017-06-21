@@ -77,8 +77,8 @@
       <file leaf-file-name="fairness_experiments.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/kidney_solver/fairness_experiments.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="298">
-              <caret line="262" column="34" lean-forward="true" selection-start-line="262" selection-start-column="34" selection-end-line="262" selection-end-column="34" />
+            <state relative-caret-position="758">
+              <caret line="135" column="53" lean-forward="true" selection-start-line="135" selection-start-column="53" selection-end-line="135" selection-end-column="53" />
               <folding>
                 <element signature="e#95#104#0" expanded="true" />
               </folding>
@@ -107,8 +107,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>:3</find>
-      <find>weighted_fairness_experiment</find>
       <find>max_sens_</find>
       <find>chain_cap_list</find>
       <find>rever</find>
@@ -137,6 +135,8 @@
       <find>$PROJECT_DIR$/../graphs/graphs_from_john/graphs_128re</find>
       <find>revers</find>
       <find>max_num_sen</find>
+      <find>:2</find>
+      <find>[:</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -442,7 +442,14 @@
       <option name="project" value="LOCAL" />
       <updated>1498057368963</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="added config file input; fixed problems with both fairness rules; stopped redundant calculations; changed output file format.">
+      <created>1498086277365</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1498086277365</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -500,7 +507,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="test" />
-    <option name="LAST_COMMIT_MESSAGE" value="test" />
+    <MESSAGE value="added config file input; fixed problems with both fairness rules; stopped redundant calculations; changed output file format." />
+    <option name="LAST_COMMIT_MESSAGE" value="added config file input; fixed problems with both fairness rules; stopped redundant calculations; changed output file format." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -935,8 +943,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/kidney_solver/fairness_experiments.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="298">
-          <caret line="262" column="34" lean-forward="true" selection-start-line="262" selection-start-column="34" selection-end-line="262" selection-end-column="34" />
+        <state relative-caret-position="758">
+          <caret line="135" column="53" lean-forward="true" selection-start-line="135" selection-start-column="53" selection-end-line="135" selection-end-column="53" />
           <folding>
             <element signature="e#95#104#0" expanded="true" />
           </folding>
