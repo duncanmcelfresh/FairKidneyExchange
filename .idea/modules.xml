@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/fairness_long_chains.iml" filepath="$PROJECT_DIR$/.idea/fairness_long_chains.iml" />
+    </modules>
+  </component>
+</project>
