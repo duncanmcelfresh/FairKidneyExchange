@@ -152,6 +152,7 @@ def start():
             else:
                 print("could not find *details.input file for: {}\n".format(maxcard_filename))
 
+    print("fairness_experiments finished")
 
 def alpha_lex_experiment(digraph,altruists,dirname, outfile, alpha_list, chain_cap_list, edge_prob_list=[1.0]):
 
