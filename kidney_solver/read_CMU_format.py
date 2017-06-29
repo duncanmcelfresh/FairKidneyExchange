@@ -2,7 +2,7 @@ import pandas
 from kidney_digraph import Digraph
 from kidney_ndds import Ndd, NddEdge
 
-def read_CMU_format( details_filename, maxcard_filename ):
+def read_CMU_format( details_filename, maxcard_filename,frac_edges=1.0,seed=101 ):
     # read details.inuput file
     col_names = ['id','abo_patient', 'abo_fonor', 'wife_patient', 'pra', 'in_deg', 'out_deg', 'is_ndd', 'is_marginalized']
     df_details = pandas.read_csv(details_filename , names = col_names, skiprows=1, delim_whitespace=True)
@@ -25,6 +25,12 @@ def read_CMU_format( details_filename, maxcard_filename ):
     df_edges.drop(df_edges.index[-1]) # drop the last column
     nonzero_edges = df_edges.loc[df_edges['weight'] > 0 ] # take only nonzero edges
 
+    # sample from the edges, if we are supposed to sparsify...
+    if frac_edges < 1:
+        final_edges = nonzero_edges.sample(frac=frac_edges, random_state=seed)
+    else:
+        final_edges = nonzero_edges
+
     # ind ndds if they exist
     ndd_details = df_details.loc[df_details[ 'is_ndd' ] == 1 ]
     ndd_count = len(ndd_details)
@@ -40,7 +46,7 @@ def read_CMU_format( details_filename, maxcard_filename ):
     use_ndds = ndd_count > 0
 
     # add edges to pairs and ndds
-    for index, row in nonzero_edges.iterrows():
+    for index, row in final_edges.iterrows():
         src = row['src_id']
         tgt_id = vtx_index[ row['tgt_id'] ]
         weight = row['weight']

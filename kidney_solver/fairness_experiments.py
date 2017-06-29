@@ -70,6 +70,10 @@ def start():
 
     input_graph_type = config['input_graph_type'] # either 'KPD' or CMU'
 
+    if input_graph_type=='CMU':
+        frac_edges_list = config['frac_edges_list'] # [0.2, 0.5, 0.8, 0.1]
+        frac_edges_list.sort()
+
     # input directory containing either:
     # - (input_graph_type == KPD): ONLY directories containing unzipped KPD files ('*edgeweights.csv' and '*recipient.csv') or
     # - (input_graph_type == CMU): random graphs in CMU format ('*maxcard.input' and '*details.input')
@@ -118,9 +122,9 @@ def start():
             altruists,ndd_index = kidney_ndds.read_from_kpd(edges_filename, d, vtx_index)
 
             if fairness_rule == 'weighted':
-                weighted_fairness_experiment(beta_list,d, altruists, dirname, output_file, chain_cap_list, edge_prob_list)
+                weighted_fairness_experiment(beta_list,d, altruists, dirname, output_file, chain_cap_list, edge_prob_list,1)
             if fairness_rule == 'alpha_lex':
-                alpha_lex_experiment(d, altruists, dirname, output_file, alpha_list, chain_cap_list, edge_prob_list)
+                alpha_lex_experiment(d, altruists, dirname, output_file, alpha_list, chain_cap_list, edge_prob_list,1)
 
     ## for random graph format
     if input_graph_type == 'CMU':
@@ -140,21 +144,19 @@ def start():
             if len(details_files)>0:
                 details_filename = details_files[0]
 
-                d, altruists = read_CMU_format( details_filename, maxcard_filename )
+                for frac_edges in frac_edges_list:
+                    d, altruists = read_CMU_format(details_filename, maxcard_filename, frac_edges, 101)
 
-                #weighted_fairness_experiment(beta_list,d, altruists, dirname, outfile, chain_cap_list, edge_prob_list)
-                # alpha_lex_experiment(d, altruists, dirname, output_file, chain_cap_list, edge_prob_list)
-
-                if fairness_rule == 'weighted':
-                    weighted_fairness_experiment(beta_list,d, altruists, dirname, output_file, chain_cap_list, edge_prob_list)
-                if fairness_rule == 'alpha_lex':
-                    alpha_lex_experiment(d, altruists, dirname, output_file, alpha_list, chain_cap_list, edge_prob_list)
+                    if fairness_rule == 'weighted':
+                        weighted_fairness_experiment(beta_list,d, altruists, dirname, output_file, chain_cap_list, edge_prob_list,frac_edges)
+                    if fairness_rule == 'alpha_lex':
+                        alpha_lex_experiment(d, altruists, dirname, output_file, alpha_list, chain_cap_list, edge_prob_list,frac_edges)
             else:
                 print("could not find *details.input file for: {}\n".format(maxcard_filename))
 
     print("fairness_experiments finished")
 
-def alpha_lex_experiment(digraph,altruists,dirname, outfile, alpha_list, chain_cap_list, edge_prob_list=[1.0]):
+def alpha_lex_experiment(digraph,altruists,dirname, outfile, alpha_list, chain_cap_list, edge_prob_list,frac_edges):
 
     alpha_list.sort()
 
@@ -225,7 +227,7 @@ def alpha_lex_experiment(digraph,altruists,dirname, outfile, alpha_list, chain_c
 
                     # if the previous solution already satisfies this minimum score, just write it again
                     if fair_score >= min_fair_score:
-                        csvfile.write("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
+                        csvfile.write("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
                                     dirname,
                                     cycle_cap,
                                     chain_cap,
@@ -240,7 +242,8 @@ def alpha_lex_experiment(digraph,altruists,dirname, outfile, alpha_list, chain_c
                                     fair_score,
                                     num_matched,
                                     num_sensitized,
-                                    edge_success_prob))
+                                    edge_success_prob,
+                                    frac_edges))
                     # if the previous solution doesn't meet the alpha criteria, solve again with the new min fair score
                     else:
                         cfg = kidney_ip.OptConfig(digraph, altruists, cycle_cap, chain_cap, verbose,
@@ -251,7 +254,7 @@ def alpha_lex_experiment(digraph,altruists,dirname, outfile, alpha_list, chain_c
                         fair_score = sol.get_fair_score(altruists)
                         num_matched = sol.num_matched()
                         num_sensitized = sol.num_sensitized()
-                        csvfile.write("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
+                        csvfile.write("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
                             dirname,
                             cycle_cap,
                             chain_cap,
@@ -266,9 +269,10 @@ def alpha_lex_experiment(digraph,altruists,dirname, outfile, alpha_list, chain_c
                             fair_score,
                             num_matched,
                             num_sensitized,
-                            edge_success_prob))
+                            edge_success_prob,
+                            frac_edges))
 
-def weighted_fairness_experiment(beta_list,digraph,altruists,dirname,outfile,chain_cap_list,edge_prob_list=[1.0]):
+def weighted_fairness_experiment(beta_list,digraph,altruists,dirname,outfile,chain_cap_list,edge_prob_list,frac_edges):
 
     beta_list.sort()
 
@@ -356,7 +360,7 @@ def weighted_fairness_experiment(beta_list,digraph,altruists,dirname,outfile,cha
 
             with open(outfile,'a') as csvfile:
                 for i,beta in enumerate(beta_list): # enumerate(beta_list[0:max_i+1]):
-                    csvfile.write("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
+                    csvfile.write("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
                         dirname,
                         cycle_cap,
                         chain_cap,
@@ -371,7 +375,8 @@ def weighted_fairness_experiment(beta_list,digraph,altruists,dirname,outfile,cha
                         fair_score[i],
                         num_matched[i],
                         sens_matched[i],
-                        edge_success_prob))
+                        edge_success_prob,
+                        frac_edges))
 
 def find_optimal_fairness(digraph,altruists,dirname):
     # copy KPD graph with only weights for sensitized patients
@@ -394,8 +399,9 @@ def print_header(outfile):
                     'fair_score',
                     'num_pairs_matched',
                     'num_sens_matched',
-                    'edge_success_prob']
-        csvfile.write("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(*colnames))
+                    'edge_success_prob',
+                    'frac_edges']
+        csvfile.write("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(*colnames))
 
 
 
