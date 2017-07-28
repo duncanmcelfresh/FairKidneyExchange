@@ -185,43 +185,27 @@ def alpha_lex_experiment(digraph,altruists,dirname, outfile, alpha_list, chain_c
     total_num_pairs = digraph.get_num_pairs()
     num_ndds = len(altruists)
 
-    with open(outfile, 'a') as csvfile:
+    for chain_cap in chain_cap_list:
+        for edge_success_prob in edge_prob_list:
+            fair_cfg = kidney_ip.OptConfig(d_fair, a_fair, cycle_cap, chain_cap, verbose,
+                                           timelimit, edge_success_prob, eef_alt_constraints,
+                                           lp_file, relax, multi, gap, min_sensitized)
+            fair_sol = solve_kep(fair_cfg, formulation, use_relabelled)
 
-        for chain_cap in chain_cap_list:
-            for edge_success_prob in edge_prob_list:
-                fair_cfg = kidney_ip.OptConfig(d_fair, a_fair, cycle_cap, chain_cap, verbose,
-                                               timelimit, edge_success_prob, eef_alt_constraints,
-                                               lp_file, relax, multi, gap, min_sensitized)
-                fair_sol = solve_kep(fair_cfg, formulation, use_relabelled)
+            max_fair_score = fair_sol.total_score
+            max_sens_matched = fair_sol.num_sensitized()
+            # first solve original problem (alpha = 0)
+            min_fair_score = 0
+            cfg = kidney_ip.OptConfig(digraph, altruists, cycle_cap, chain_cap, verbose,
+                                      timelimit, edge_success_prob, eef_alt_constraints,
+                                      lp_file, relax, multi, gap, min_fair_score)
+            sol = solve_kep(cfg, formulation, use_relabelled)
 
-                max_fair_score = fair_sol.total_score
-                max_sens_matched = fair_sol.num_sensitized()
-                # first solve original problem (alpha = 0)
-                min_fair_score = 0
-                cfg = kidney_ip.OptConfig(digraph, altruists, cycle_cap, chain_cap, verbose,
-                                          timelimit, edge_success_prob, eef_alt_constraints,
-                                          lp_file, relax, multi, gap, min_fair_score)
-                sol = solve_kep(cfg, formulation, use_relabelled)
+            fair_score = sol.get_fair_score(altruists)
+            num_matched = sol.num_matched()
+            num_sensitized = sol.num_sensitized()
 
-                fair_score = sol.get_fair_score(altruists)
-                num_matched = sol.num_matched()
-                num_sensitized = sol.num_sensitized()
-                # csvfile.write("{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
-                    # dirname,
-                    # cycle_cap,
-                    # chain_cap,
-                    # total_num_pairs,
-                    # num_ndds,
-                    # total_num_sensitized,
-                    # max_fair_score,
-                    # beta,
-                    # min_fair_score,
-                    # sol.total_score,
-                    # fair_score,
-                    # num_matched,
-                    # num_sensitized,
-                    # edge_success_prob))
-
+            with open(outfile, 'a') as csvfile:
                 for alpha in alpha_list:
                     min_fair_score = alpha * max_fair_score  # numpy.linspace(0,1,11) * max_fair_score
 
