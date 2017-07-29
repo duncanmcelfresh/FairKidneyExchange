@@ -103,7 +103,7 @@ def start():
         print_header(output_file)
         kpd_dirs = glob.glob(input_dir+os.sep+'*/')
 
-        for dir in kpd_dirs:
+        for dir in sorted(kpd_dirs):
 
             dirname = dir.split('/')[-2] # os.path.basename(dir)
 
